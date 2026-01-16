@@ -5,14 +5,14 @@ from database import *
 router = APIRouter()
 
 @router.get("/products")
-async def allProducts(sec:Session = Depends(get_session)):
+async def all_Products(sec:Session = Depends(get_session)):
     x = select(Products)
     ret = sec.exec(x).all() 
     return ret
 
 
 @router.get("/item/{id}")
-async def getid(id:int, resp:Response, sec : Session = Depends(get_session)):
+async def get_item(id:int, resp:Response, sec : Session = Depends(get_session)):
     ret = sec.get(Products, id)
     if not ret:
         # raise HTTPException(status_code = 404, detail = "NOT FOUND")
@@ -23,8 +23,8 @@ async def getid(id:int, resp:Response, sec : Session = Depends(get_session)):
 
 
 @router.post("/products", status_code=status.HTTP_201_CREATED)
-async def create(f:get_product, sec:Session = Depends(get_session)):
-    pp:Products = Products(f)
+async def create_item(f:GetProduct, sec:Session = Depends(get_session)):
+    pp:Products = Products.model_validate(f)
     sec.add(pp)
     sec.commit()
     sec.refresh(pp)
@@ -32,7 +32,7 @@ async def create(f:get_product, sec:Session = Depends(get_session)):
 
 
 @router.put("/products/{id}")
-async def update(id:int ,f:get_product, sec:Session = Depends(get_session)):
+async def update_item(id:int ,f:GetProduct, sec:Session = Depends(get_session)):
     x = sec.get(Products, id)
     if not x :
         raise HTTPException(status_code= 404, detail="NOT FOUND")
@@ -45,7 +45,7 @@ async def update(id:int ,f:get_product, sec:Session = Depends(get_session)):
     
 
 @router.delete("/products/{id}")
-async def dele(id:int , sec:Session = Depends(get_session)):
+async def delete_item(id:int , sec:Session = Depends(get_session)):
     x = sec.get(Products, id)
     if not x :
         raise HTTPException(status_code= 404, detail="NOT FOUND")

@@ -1,4 +1,3 @@
-from librarys import *
 from database import *
 from routes import router
 
@@ -7,7 +6,7 @@ app = FastAPI()
 
 @app.on_event("startup")
 def on_startup():
-    creatDataBase()
+    creat_database_and_tables()
 
 
 app.include_router(router)

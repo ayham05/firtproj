@@ -4,7 +4,7 @@ sqlurl = "postgresql://postgres:0159@localhost/mydb"
 
 engine = create_engine(sqlurl)
 
-def creatDataBase():
+def creat_database_and_tables():
     SQLModel.metadata.create_all(engine)
 
 
