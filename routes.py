@@ -23,7 +23,7 @@ async def getid(id:int, resp:Response, sec : Session = Depends(get_session)):
 
 
 @router.post("/products", status_code=status.HTTP_201_CREATED)
-async def create(f:get_Product, sec:Session = Depends(get_session)):
+async def create(f:get_product, sec:Session = Depends(get_session)):
     pp:Products = Products(f)
     sec.add(pp)
     sec.commit()
@@ -32,15 +32,12 @@ async def create(f:get_Product, sec:Session = Depends(get_session)):
 
 
 @router.put("/products/{id}")
-async def update(id:int ,f:get_Product, sec:Session = Depends(get_session)):
+async def update(id:int ,f:get_product, sec:Session = Depends(get_session)):
     x = sec.get(Products, id)
     if not x :
         raise HTTPException(status_code= 404, detail="NOT FOUND")
     else:
-        x.name = f.name
-        x.price = f.price
-        x.stock = f.stock
-        x.description = f.description
+        x.sqlmodel_update(f)
         sec.add(x)
         sec.commit()
         sec.refresh(x)
