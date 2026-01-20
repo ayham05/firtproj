@@ -1,0 +1,7 @@
+pydantic-settings
+SQLModel 
+fastapi 
+pydantic 
+typing 
+uvicorn
+psycopg2
