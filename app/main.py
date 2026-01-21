@@ -1,4 +1,4 @@
-from dp import *
+from db import *
 from api.api import router
 from fastapi import FastAPI
 app = FastAPI()

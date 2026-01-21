@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Depends, status, Response, APIRouter
 from sqlmodel import select
 from schemas import *
-from dp import *
+from db import *
 
 async def get_from_db(id:int, sec: Session):
     ret = sec.get(Products, id)

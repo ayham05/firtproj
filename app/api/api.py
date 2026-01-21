@@ -1,7 +1,7 @@
 from fastapi import HTTPException, Depends, status, Response, APIRouter
 from sqlmodel import select
 from schemas import *
-from dp import *
+from db import *
 from .endpoints import get_from_db, save_to_db, delete_from_db
 
 router = APIRouter()
