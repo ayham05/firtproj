@@ -2,7 +2,10 @@ from fastapi import HTTPException, Depends, status, Response, APIRouter
 from sqlmodel import select
 from models import *
 from db import *
-from crud import get_from_db, save_to_db, delete_from_db, get_all_products
+from crud import get_from_db, save_to_db, delete_from_db, get_all_products, get_user_by_email, get_user_by_username, is_email_exists, is_username_exists
+from crud import authenticate_user , raise_invalid_credentials
+from schemas import UserCreate, UserRead, UserLogin
+from core import hash_password, create_tokens
 
 router = APIRouter()
 
@@ -13,6 +16,12 @@ router = APIRouter()
 async def all_Products(sec:Session = Depends(get_session)):
     return await get_all_products(sec)
 
+
+@router.get("/users")
+async def all_users(sec:Session = Depends(get_session)):
+    x = select(Users)
+    ret = sec.exec(x).all() 
+    return ret
 
 @router.get("/item/{id}")
 async def get_item(id:int, sec : Session = Depends(get_session)):
@@ -41,3 +50,36 @@ async def delete_item(id:int , sec:Session = Depends(get_session)):
     delete_from_db(x,sec)
     return {"messege":"item deleted"}
     
+
+
+
+@router.put("/register")
+async def register_user(user: UserCreate, sec:Session = Depends(get_session)):
+
+    is_username_exists(sec, user.user_name)
+    is_email_exists(sec, user.email)
+
+    hash_pass = hash_password(user.password)     
+    db_user = Users(
+        user_name=user.user_name,
+        email=user.email,
+        hash_password=hash_pass, 
+        role=user.role
+    )
+
+    save_to_db(db_user,sec)
+
+
+@router.post("/login")
+async def login(login_data:UserLogin, sec: Session = Depends(get_session)):
+    user = authenticate_user(sec, login_data.email, login_data.password)
+    if not user:
+        raise_invalid_credentials()
+    
+    access_t, refresh_t = create_tokens(user.id)
+    return {
+        "access_token": access_t,
+        "refresh_token": refresh_t,
+        "token_type": "bearer"
+    }
+
