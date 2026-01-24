@@ -5,3 +5,7 @@ pydantic
 typing 
 uvicorn
 psycopg2
+passlip
+python-jose
+email-validator
+"bcrypt==4.0.1"
